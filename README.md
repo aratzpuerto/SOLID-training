@@ -15,6 +15,7 @@ Every software component should have one and only one resposibility
 
 _Cohesion_: The degree to which the various parts of a software component are related
 
+```
 Public class Square {
 
     int side = 5;
@@ -41,9 +42,11 @@ Public class Square {
     }
 
 }
+```
 
 The methods for calculation and rendering do not have a high level of cohesion between them. Separating them into different classes improves the cohesion as a whole
 
+```
 Public class Square {
 
     int side = 5;
@@ -74,11 +77,13 @@ public class SquareUI {
     }
 
 }
+```
 
 Higher Cohesion helps attain better adherence to the Single Responsibility Principle. Thus, assigning a single responsibility to each module. 
 
 _Coupling_: The level of inter dependency between various software components
 
+```
 Puiblic class Student {
     
     Private String studentId;
@@ -108,8 +113,11 @@ Puiblic class Student {
         this.strudentId = studentId;
     }
 }
+```
 
 In the event that the way the database is handled is changes, i.e from mysql to mongodb, the save method will have to go through many changes. It is tight coupled to mysql.
+
+```
 Puiblic class Student {
     
     Private String studentId;
@@ -146,6 +154,7 @@ Public class StudentRepository {
     }
 
 }
+```
 
 By defining a repository which handles database connections any change in the way the database is handled is nos responsibility of said repository.
 
@@ -154,6 +163,7 @@ __Loose Coupling helps attain better adherence to the Single Responsibility Prin
 ### Reasons for Change
 Every software component should have one and only one _reason_ to change. Software is never dormant, it always keeps changing.
 
+```
 Puiblic class Student {
     
     Private String studentId;
@@ -183,6 +193,7 @@ Puiblic class Student {
         this.strudentId = studentId;
     }
 }
+```
 
 Reasons to change
 1.  A change in the student id format
@@ -191,6 +202,7 @@ Reasons to change
 
 If a software component has multiple reasons to change, then the frequency of changes to it will increase, thus increasing the posibility to introduce new bugs.
 
+```
 Puiblic class Student {
     
     Private String studentId;
@@ -209,10 +221,12 @@ Puiblic class Student {
         this.strudentId = studentId;
     }
 }
+```
 
 Reasons to change
 1.  Changes to student profile
 
+```
 Public class StudentRepository {
     public void save() {
         // Serialize object into a string representation
@@ -230,12 +244,15 @@ Public class StudentRepository {
     }
 
 }
+```
 
 Reasons to change
 1.  A change in the database backend, as advised by the technical team.
 
 
 ### Live coding Session
+
+```
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -312,13 +329,14 @@ public class Employee {
     }
 
 }
+```
 
 Reasons to change
 1.  Changes in Employee Attributes
 2.  Changes in Database
 3.  Changes in Tax Calculation
 
-
+```
 public class Employee {
     private String employeeId;
     private String employeeName;
@@ -375,10 +393,12 @@ public class Employee {
     }
 
 }
+```
 
 _Reasons to change_
 1.  Changes in Employee Attributes
 
+```
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -398,10 +418,12 @@ public class EmployeeRepository {
         }
     }
 }
+```
 
 _Reasons to change_
 1.  Changes in Database
 
+```
 public class TaxCalculator {
         public void calculateTax(Employee employee) {
         if (employee.getEmployeeType().equals("fulltime")) {
@@ -412,6 +434,7 @@ public class TaxCalculator {
         }
     }
 }
+```
 
 _Reasons to change_
 1.  Changes in Tax Calculation
@@ -421,6 +444,7 @@ _Open Closed Principle (OCP)_: Software components should be closed for modifica
 _Closed For Modification_: New features getting added to the software component, should NOT have to modify existing code.
 _Open For Extension_: A software component should be extendable to add a new feature or to add a new behavior to it.
 
+```
 Public class InsurancePremiumDiscountCalculator {
 
     public int
@@ -448,10 +472,11 @@ public class VehicleInsuranceCustomerProfile {
     }
    
 }
+```
 
 Now the Calculator class has to be modified since the calculate method currently takes in a HealthInsuranceCustomerProfile object. the only way out is to add a new overloaded method which takes in a VehicleInsuranceCustomerProfile object
 
-
+```
 Public class InsurancePremiumDiscountCalculator {
 
     public int
@@ -470,9 +495,11 @@ Public class InsurancePremiumDiscountCalculator {
     }
 
 }
+```
 
 What if we want to handle home insurance too? More code has to be added to this class, patching the code. This makes the code not closed for modification.
 
+```
 Public class InsurancePremiumDiscountCalculator {
 
     public int
@@ -505,6 +532,7 @@ Implements customerProfile {
         return true; //or false
     }
 }
+```
 
 By adding the new class implementing the CustomerProfile interface the lass InsurancePremiumDiscountCalculator doesn't have to be change if whe ant to handle future extensions Thus, making it closed for modification.
 
@@ -524,6 +552,7 @@ _Caution_
 
 ### Live coding Session
 
+```
 // InsurancePremiumDiscountCaluclator.java
 Public class InsurancePremiumDiscountCalculator {
 
@@ -564,9 +593,11 @@ public class VehicleInsuyranceCustomerProfile {
     }
 
 }
+```
 
 Let's revamp the design so as to follow OCP.
 
+```
 // InsurancePremiumDiscountCaluclator.java
 Public class InsurancePremiumDiscountCalculator {
 
@@ -606,9 +637,11 @@ public class VehicleInsuyranceCustomerProfile implements CustomerProfile {
 public interface CustomerProfile {
         public boolean isLoyalCustomer();
 }
+```
 
 Let's add a new class to handle home insurance
 
+```
 //HomeInsuranceCustomerProfile
 import java.util.Random;
 
@@ -618,6 +651,7 @@ public class HomeInsuyranceCustomerProfile implements CustomerProfile {
         return new Random().nextBoolean();
     }
 }
+```
 
 Notice that we did not have to change any other class to handle home insurance. We simply added a new class.
 
@@ -627,6 +661,7 @@ _Liskov Substitution Principle (LSP)_: Objects should be replaceable with their 
 
 In terms of inheritance, an Ostrich is a bird, however, Ostrich cannot fly. Unimplemented methds are almost always indicative of a design flaw.
 
+```
 public class Bird {
     public void fly() {
         //Fly
@@ -641,12 +676,14 @@ public class Ostrich extends Bird {
         throw new RuntimeException();
     }
 }
+```
 
 The statement Ostrich 'is-a' bird might still be correct. However, if we apply LSP here, this test fails. So LSP requires a test standard that is more strict than the 'is-a' test.
 _Change the 'Is-A' way of thinking_. _If it looks like a duck and quacks like a duck but it needs batteries, you probably have the wrong abstaction!_
 
 ### Breaking the Hierarchy
 
+```
 public class Car {
 
     public double getCabinWidth(){
@@ -666,11 +703,13 @@ public class RacingCar extends Car {
     }
 
 }
+```
 
 Racing car inherits from Car but racing cars do not have a cabin width. But they have a cockpit width.
 
 Let's create some objects of Cars and RacingCars.
 
+```
 public class CarUtils {
 
     public static void main(String[] args) {
@@ -689,10 +728,11 @@ public class CarUtils {
     }
 
 }
+```
 
 This code will not work correctly, because of an unimplemented method. To fix this the inheritance has to be broken.
 
-
+```
 public class Vehicle {
 
     public double getInteriorWidth() {
@@ -744,10 +784,12 @@ public class VehicleUtils {
     }
 
 }
+```
 
 ### Tell don't Ask
 Let's apply LSP in a different way
 
+```
 public class Product {
 
     protected double discount;
@@ -788,9 +830,11 @@ public class PricingUtils {
     }
 
 }
+```
 
 This is not a good desing. It is agains LSP. We should have been able to deal with all the objects as Product objects itself instead of typecasting to InHouseProduct.
 
+```
 public class Product {
 
     protected double discount;
@@ -834,9 +878,11 @@ public class PricingUtils {
     }
 
 }
+```
 
 ### Live coding session
 
+```
 //Product.java
 public class Product {
 
@@ -885,10 +931,12 @@ public class PricingUtils {
     }
 
 }
+```
 
 ## Interface Segregation Principle
 _Interface Segregation Principle (ISP)_: No client should be forced to depend on methods it does not use.
 
+```
 public interface IMultiFunction {
 
     public void print();
@@ -899,9 +947,11 @@ public interface IMultiFunction {
     public void internetFax();
 
 }
+```
 
 This interface defines methods that represent the various functions.
 
+```
 public class XeroxWokCentre implements IMultiFunction
 {
 
@@ -936,9 +986,11 @@ public class XeroxWokCentre implements IMultiFunction
     }
 
 }
+```
 
 This class represents a particular Xerox WorkCentre. Now, let's create an instance for a printer + scanner device.
 
+```
 public class HPPrinterNScanner implements IMultiFunction
 {
 
@@ -973,9 +1025,11 @@ public class HPPrinterNScanner implements IMultiFunction
     }
 
 }
+```
 
 fax and internetFax are left unimplemented! We now have to creater an instance for a printer
 
+```
 public class CanonPrinter implements IMultiFunction
 {
 
@@ -1010,12 +1064,13 @@ public class CanonPrinter implements IMultiFunction
     }
 
 }
+```
 
 Everything except printing methods are left blank. Unimplemented methods are almost always indicative of a poor design. This goes against the ISP.
 
 ## Restructuring the code to follow ISP
 
-
+```
 public interface IMultiFunction {
 
     public void print();
@@ -1124,6 +1179,7 @@ public class CanonPrinter implements Iprint
     }
 
 }
+```
 
 The classes have become much cleaner now, no more blank implementations, thus avoiding ambiguity.
 
@@ -1152,6 +1208,7 @@ _Depenedency Inversion Peinciple (DIP)_:
       |   SQLProductRepository  |
       ---------------------------
 
+```
 // ProductCatalog
 import java.util.List;
 
@@ -1180,9 +1237,11 @@ public class SQLProductRepository {
     }
 
 }
+```
 
 ProductCatalog directly depends on SQLProductRepository, so this is the fiolation of the principle as seen in code.
 
+```
 // ProductRepository
 imnport java.util.List;
 
@@ -1230,6 +1289,7 @@ public class SQLProductRepository implemets ProductRepository {
     }
 
 }
+```
 
 
         ---------------------
@@ -1252,6 +1312,7 @@ public class SQLProductRepository implemets ProductRepository {
 ## Dependency Injection
 Ideally, we don't want the ProductCatalog to worry about how and when to trigger the instantiation. Let's provide the instatiated repository class to ProductCatalog.
 
+```
 // ECommerceMainApplication {
 
     public static void main(Sring[] args) {
@@ -1318,3 +1379,4 @@ public class SQLProductRepository implemets ProductRepository {
     }
 
 }
+```
